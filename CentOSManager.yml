@@ -1,0 +1,517 @@
+---
+# - hosts: centos_servers
+- hosts:
+    - localhost
+
+  become: yes
+  become_user: root
+  become_method: sudo
+  order: sorted
+  gather_facts: True
+
+  tasks:
+    - name: Run whoami
+      command: /usr/bin/whoami
+
+    - name: Yum install python2
+      become: yes
+      shell: |
+        yum install -y python2
+      when: ansible_distribution == "CentOS" or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Fedora'
+
+    - import_tasks: task/dnsserver_update.yml
+
+    - name: Install Python3
+      become: yes
+      shell: |
+        yum install -y python3 python3-pip wget
+      when: ansible_distribution == "CentOS" or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Fedora'
+
+    - name: Install bootstrap packages
+      become: yes
+      shell: |
+        yum install -y dnf wget curl
+      when: ansible_distribution == "CentOS" or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Fedora'
+
+    - name: Install epel-release
+      become: yes
+      become_user: root
+      become_method: sudo
+      raw: yum install -y epel-release
+      when: ansible_distribution == "CentOS" or ansible_distribution == 'Red Hat Enterprise Linux'
+
+    - name: Install common RHEL / CentOS / Fedora packages
+      become: yes
+      dnf:
+        state: present
+        name:
+          - amanda
+          - ansible
+          - atlas
+          - atop
+          - binutils
+          - bitmap-fixed-fonts
+          - blas
+          - boost
+          - boost-devel
+          - boost-thread
+          - cargo
+          - chromedriver
+          - cifs-utils
+          - clang
+          - cmake
+          - colordiff
+          - csh
+          - curl-devel
+          - davfs2
+          - dbus-devel
+          - dejavu-lgc-sans-fonts
+          - device-mapper-persistent-data
+          - dos2unix
+          - etckeeper
+          - evince
+          - expat-devel
+          - fftw
+          - fftw-devel
+          - fio
+          - fish
+          - fontconfig-devel
+          - freetype-devel
+          - fuse3
+          - fuse3-devel
+          - fuse3-libs
+          - gc
+          - gcc
+          - gcc-c++
+          - gcc-gfortran
+          - gdb
+          - gettext-devel
+          - git
+          - git-all
+          - glibc.i686
+          - gmp
+          - gmp-devel
+          - gnutls-devel
+          - go
+          - graphviz
+          - groovy
+          - gsl
+          - gsl-devel
+          - hdparm
+          - hiredis
+          - hiredis-devel
+          - htop
+          - http-parser
+          - hwinfo
+          - icu
+          - iftop
+          - ImageMagick
+          - iotop
+          - iptables-services
+          - java-1.8.0-openjdk
+          - java-1.8.0-openjdk-devel
+          - java-11-openjdk
+          - java-11-openjdk-devel
+          - java-latest-openjdk
+          - java-latest-openjdk-devel
+          - json-devel
+          - jsoncpp
+          - jsoncpp-devel
+          - ksh
+          - liberation-fonts
+          - libffi
+          - libffi-devel
+          - libgcrypt-devel
+          - libguestfs-tools
+          - libicu
+          - libicu-devel
+          - libiodbc
+          - libjpeg-turbo
+          - libjpeg-turbo-devel
+          - libjpeg-turbo-static
+          - libmemcached
+          - libnfs-utils
+          - libpng-devel
+          - libsndfile
+          - libtiff-devel
+          - libunwind
+          - libunwind-devel
+          - libuv
+          - libvirt
+          - libvirt-client
+          - libvirt-daemon
+          - libwebp
+          - libX11-devel
+          - libxcb-devel
+          - libxml2
+          - libxml2-devel
+          - libxslt
+          - libxslt-devel
+          - lldb
+          - lvm2
+          - lzip
+          - make
+          - maven
+          - nano
+          - net-tools
+          - nfs-utils
+          - ngrep
+          - nmap
+          - nss-devel
+          - ntfs-3g
+          - openblas
+          - openblas-threads
+          - openmpi
+          - openmpi-devel
+          - openssh-clients
+          - openssh-server
+          - openssl-devel
+          - parallel
+          - parted
+          - pcre-devel
+          - pdsh
+          - perf
+          - perl
+          - perl-devel
+          - php
+          - pigz
+          - poppler
+          - postgresql
+          - postgresql-contrib
+          - postgresql-devel
+          - postgresql-odbc
+          - postgresql-server
+          - pssh
+          - python3
+          - python3-devel
+          - python3-tkinter
+          - qemu-img
+          - qemu-kvm
+          - readline-devel
+          - rpmdevtools
+          - rsyslog
+          - ruby
+          - rustc
+          - samba
+          - samba-client
+          - screen
+          - sqlite-devel
+          - sudo
+          - texlive
+          - texlive-collection-latex
+          - texlive-collection-latexrecommended
+          - texlive-collection-xetex
+          - texlive-dvipng
+          - texlive-dvips
+          - texlive-latex
+          - texlive-xetex
+          - tigervnc
+          - tigervnc-server
+          - time
+          - tree
+          - tzdata
+          - ucs-miscfixed-fonts
+          - unixODBC
+          - unixODBC-devel
+          - usbutils
+          - utf8cpp-devel
+          - vim
+          - virt-install
+          - virt-manager
+          - virt-viewer
+          - wxGTK3
+          - wxGTK3-devel
+          - xterm
+          - yum-utils
+          - zlib-devel
+          - zsh
+
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '7') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '7') or
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '8') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '8') or
+        (ansible_distribution == "AlmaLinux" and ansible_distribution_major_version == '8') or
+        (ansible_distribution == 'Fedora')
+
+    - name: Install CentOS 7 common packages
+      become: yes
+      dnf:
+        state: present
+        name:
+          - ansible-inventory-grapher
+          - ansible-lint
+          - ansible-review
+          - asio-devel
+          - atlas-devel
+          - blas-devel
+          - boost169-*
+          - bridge-utils
+          - compat-gcc-44
+          - compat-gcc-44-c++
+          - compat-gcc-44-gfortran
+          - curlftpfs
+          - dh-autoreconf
+          - fuse
+          - fuse-sshfs
+          - gc-devel
+          - gstreamer-devel
+          - http-parser-devel
+          - kdiff3
+          - lapack-devel
+          - libheif
+          - libheif-devel
+          - libmemcached-devel
+          - libreoffice
+          - libsndfile-devel
+          - libuv-devel
+          - libuv-static
+          - libvirt-python
+          - libwebp-tools
+          - mysql-connector-java
+          - mysql-connector-odbc
+          - ntp
+          - openblas-devel
+          - opencv
+          - opencv-devel
+          - pandoc
+          - perl-DBD-Pg
+          - pgadmin3
+          - php-mysql
+          - phpPgAdmin
+          - pwgen
+          - python36-devel
+          - python36-ipython_genutils
+          - python36-numpy
+          - python36-pyicu
+          - python36-wxpython4
+          - R
+          - remmina
+          - sbcl
+          - ShellCheck
+          - tesseract
+          - vlc
+          - wine
+          - wxGTK
+          - wxPython
+          - wxPython-devel
+
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '7') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '7')
+
+    - name: Install Fedora packages
+      become: yes
+      dnf:
+        state: present
+        name:
+          - python-argcomplete
+      when: (ansible_distribution == "Fedora")
+
+    - name: Install CentOS 7 and Fedora common packages
+      become: yes
+      dnf:
+        state: present
+        name:
+          - atril
+          - file-devel
+          - git-lfs
+          - levien-inconsolata-fonts
+          - libnet-devel
+          - libpqxx
+          - libpqxx-devel
+          - libselinux-python
+          - libyaml-devel
+          - most
+          - neovim
+          - php-libvirt
+          - python-argcomplete
+          - python-devel
+          - python-pip
+          - python2-dnf
+          - texlive-xetex-def
+          - xpdf
+          - yum-axelget
+
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '7') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '7') or
+        (ansible_distribution == 'Fedora')
+
+    - name: Install CentOS 7 group packages
+      yum:
+        name:
+          - "@Compatibility Libraries"
+          - "@System Administration Tools"
+          - "@System Management"
+
+        state: present
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '7') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '7')
+
+    - name: Install CentOS and Fedora package groups
+      dnf:
+        name:
+          - "@Development tools"
+          - "@Fedora Packager"
+          # - '@Security Tools'
+          # - '@Scientific Support'
+          # - '@Compute Node'
+          # - '@File and Print Server'
+          # - '@Infrastructure Server'
+
+        state: present
+      when: ansible_distribution == "CentOS" or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Fedora'
+
+    - name: Install CentOS / RHEL 8 group packages
+      become: yes
+      become_user: root
+      become_method: sudo
+      raw: yum groupinstall -y "Security Tools" "RPM Development Tools" "Legacy UNIX Compatibility" "System Tools"
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '8') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '8')
+
+    - name: Install CentOS / RHEL 8 group packages
+      become: yes
+      become_user: root
+      become_method: sudo
+      raw: echo 'Could not install headless management group on CentOS 8 with yum groupinstall -y "Headless Management"'
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '8') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '8')
+
+    - name: Install CentOS / RHEL 8 packages
+      yum:
+        name:
+          - maven
+
+        state: present
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '8') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '8')
+
+    - name: Install Fedora package groups
+      dnf:
+        name:
+          - "@Administration Tools"
+          - "@Ansible node"
+          - "@C Development Tools and Libraries"
+          - "@Cloud Infrastructure"
+          - "@Cloud Management Tools"
+          - "@D Development Tools and Libraries"
+          - "@Development tools"
+          - "@Domain Membership"
+          - "@Editors"
+          - "@Educational Software"
+          - "@Engineering and Scientific"
+          - "@Fedora Eclipse"
+          - "@Fedora Packager"
+          - "@FreeIPA Server"
+          - "@Headless Management"
+          - "@Python Classroom"
+          - "@Python Science"
+          - "@RPM Development Tools"
+          - "@Security Lab"
+          # - '@Security Tools'
+          - "@System Tools"
+          - "@Text-based Internet"
+
+        state: present
+      when: ansible_distribution == 'Fedora'
+
+    - name: Install nfs-utils
+      become: yes
+      shell: yum install -y nfs-utils
+      when: ansible_distribution == "CentOS" or ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Fedora'
+
+    - name: Test whoami
+      command: /usr/bin/whoami
+
+    - name: Bootstrap a host by installing dnf
+      become: yes
+      become_user: root
+      become_method: sudo
+      raw: yum install -y dnf python3 python3-pip epel-release
+      when:
+        (ansible_distribution == "CentOS") or
+        (ansible_distribution == 'Red Hat Enterprise Linux')
+
+    - name: Bootstrap a host by installing dnf
+      become: yes
+      become_user: root
+      become_method: sudo
+      raw: yum install -y python-pip
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '7') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '7')
+
+    - name: Install packages
+      become: yes
+      dnf:
+        state: present
+        name:
+          - amanda
+          - ansible
+          - binutils
+          - chromium
+          - chromium-headless
+          - qt5-qtbase
+          - qt5-qtbase-devel
+          - redhat-lsb
+          - texlive
+          - texlive-collection-latex
+          - texlive-collection-latexrecommended
+          - texlive-collection-xetex
+          - texlive-latex
+          - texlive-xetex
+          - texlive-pst-tools
+
+      when: ansible_distribution == "CentOS" or ansible_distribution == 'Red Hat Enterprise Linux'
+      tags:
+        - packages
+
+    - name: install gui package groups
+      yum:
+        name:
+          - gcc
+        state: present
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '7') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '7')
+
+    - name: Set up GUI desktop
+      become: yes
+      become_user: root
+      become_method: sudo
+      shell: |
+        systemctl get-default
+        systemctl set-default graphical.target
+        systemctl get-default
+        systemctl isolate graphical.target
+
+      when: ansible_distribution == "CentOS"
+      tags:
+        - gui_packages
+
+    - name: Install GCC 8 on CentOS 7 / RHEL 7
+      become: yes
+      raw: yum install centos-release-scl -y; yum install devtoolset-8-gcc devtoolset-8-gcc-c++ -y
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '7') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '7')
+
+    - name: Install ffmpeg repo on CentOS 7 / RHEL 7
+      become: yes
+      raw: yum localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-7.noarch.rpm -y
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '7') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '7')
+
+    - name: Install ffmpeg on CentOS 7 / RHEL 7
+      become: yes
+      raw: yum install ffmpeg ffmpeg-devel -y
+      when:
+        (ansible_distribution == "CentOS" and ansible_distribution_major_version == '7') or
+        (ansible_distribution == 'Red Hat Enterprise Linux' and ansible_distribution_major_version == '7')
